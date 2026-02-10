@@ -40,6 +40,7 @@ var (
 	ErrInvalidToken       = newErrcode("invalid token", 504)
 	ErrTokenExpirated     = newErrcode("invalid token", 505)
 	ErrInvalidCredentials = newErrcode("invalid credentials", 506)
+	ErrTaskAlreadyExists  = newErrcode("task already exists", 507)
 )
 
 func newErrcode(message string, code int) GoCleanError {

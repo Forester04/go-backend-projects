@@ -10,9 +10,19 @@ type CreateTaskRequest struct {
 
 type CreateTaskResponse struct {
 	Body struct {
-		ID   uint   `json:"id"`
-		Name string `json:"name"`
+		ID    uint   `json:"id"`
+		Title string `json:"name"`
 	} `json:"body"`
+}
+type GetTaskRequest struct {
+	ID uint `json:"id" uri:"id" binding:"required"`
+}
+
+type GetTaskResponse struct {
+	Body struct {
+		ID    uint   `json:"id"`
+		Title string `json:"title"`
+	}
 }
 
 type DeleteTaskRequest struct {
@@ -21,7 +31,6 @@ type DeleteTaskRequest struct {
 
 type DeleteTaskResponse struct {
 	Body struct {
-		ID   uint   `json:"id"`
-		Name string `json:"name"`
+		ID uint `json:"id"`
 	} `json:"body"`
 }

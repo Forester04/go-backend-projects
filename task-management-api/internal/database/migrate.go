@@ -6,6 +6,13 @@ import (
 )
 
 func migrate(db *gorm.DB) error {
+	db.Exec(`
+	DO $$ BEGIN
+		CREATE TYPE status AS ENUM ('todo', 'in_progress', 'done');
+	EXCEPTION
+		WHEN duplicate_object THEN null;
+	END $$;
+	`)
 	if err := db.AutoMigrate(all()...); err != nil {
 		return err
 	}
@@ -22,6 +29,8 @@ func all() []interface{} {
 
 func allMap() map[string]interface{} {
 	return map[string]interface{}{
-		"User": models.User{},
+		"User":    models.User{},
+		"Task":    models.Task{},
+		"Project": models.Project{},
 	}
 }

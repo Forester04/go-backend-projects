@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/forester04/go-backend-projects/task-management-api/internal/controllers"
 	"github.com/forester04/go-backend-projects/task-management-api/internal/database"
 	"github.com/forester04/go-backend-projects/task-management-api/internal/logger"
 	"github.com/forester04/go-backend-projects/task-management-api/internal/repositories"
@@ -40,6 +41,11 @@ func main() {
 	service := services.New(logger, globalRepository)
 
 	//Initialize handlers
+	routing := controllers.NewRouter(logger, service)
+	err = routing.Run(":" + viper.GetString("PORT"))
+	if err != nil {
+		logger.Fatal("error running router", zap.Error(err))
+	}
 
 }
 

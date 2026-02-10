@@ -39,7 +39,7 @@ type Task struct {
 	gorm.Model
 	Title       string `gorm:"type:varchar(150);not null;unique"`
 	Description string `gorm:"type:text;not null"`
-	Status      Status `gorm:"type:status;default:todo"`
-	UserID      uint   `gorm:"unique"`
-	ProjectID   uint   `gorm:"unique"`
+	Status      Status `gorm:"type:status;not null;default:todo"`
+	UserID      uint
+	ProjectID   uint
 }

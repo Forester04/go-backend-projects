@@ -11,6 +11,7 @@ import (
 type TaskRepositoryInterface interface {
 	Create(task *models.Task) error
 	GetByID(id uint) (*models.Task, error)
+	GetByTitle(name string) (*models.Task, error)
 	Update(task *models.Task) error
 	Delete(id uint) error
 }
@@ -26,6 +27,15 @@ func (rpt *TaskRepository) Create(task *models.Task) error {
 func (rpt *TaskRepository) GetByID(id uint) (*models.Task, error) {
 	task := &models.Task{}
 	err := rpt.DB.Where("id = ?", id).First(task).Error
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", errcode.ErrDatabase, err)
+	}
+	return task, nil
+}
+
+func (rpt *TaskRepository) GetByTitle(name string) (*models.Task, error) {
+	task := &models.Task{}
+	err := rpt.DB.Where("name = ?", name).Limit(1).Find(task)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", errcode.ErrDatabase, err)
 	}
