@@ -12,6 +12,8 @@ type TaskRepositoryInterface interface {
 	Create(task *models.Task) error
 	GetByID(id uint) (*models.Task, error)
 	GetByTitle(name string) (*models.Task, error)
+	GetAll() ([]*models.Task, error)
+	Rename(title string, id uint) (*models.Task, error)
 	Update(task *models.Task) error
 	Delete(id uint) error
 }
@@ -39,6 +41,25 @@ func (rpt *TaskRepository) GetByTitle(name string) (*models.Task, error) {
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", errcode.ErrDatabase, err)
 	}
+	return task, nil
+}
+
+func (rpt *TaskRepository) GetAll() ([]*models.Task, error) {
+	tasks := []*models.Task{}
+	err := rpt.DB.Find(&tasks)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", errcode.ErrDatabase, err)
+	}
+	return tasks, nil
+}
+
+func (rpt *TaskRepository) Rename(title string, id uint) (*models.Task, error) {
+	task, err := rpt.GetByID(id)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", errcode.ErrDatabase, err)
+	}
+	task.Title = title
+
 	return task, nil
 }
 
