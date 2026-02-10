@@ -3,7 +3,7 @@ package viewmodel
 type CreateTaskRequest struct {
 	Body struct {
 		Title       string `json:"title" binding:"required"`
-		Description string `json:"description" binding:"required"`
+		Description string `json:"description,omitempty"`
 		Status      string `json:"status,omitempty"`
 	} `json:"body" binding:"required"`
 }

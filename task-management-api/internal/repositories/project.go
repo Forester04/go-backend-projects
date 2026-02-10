@@ -12,7 +12,9 @@ type ProjectRepositoryInterface interface {
 	Create(project *models.Project) error
 	GetByID(id uint) (*models.Project, error)
 	GetByName(name string) (*models.Project, error)
+	GetAll() ([]*models.Project, error)
 	Update(project *models.Project) error
+	Rename(name string, id uint) (*models.Project, error)
 	Delete(id uint) error
 }
 type ProjectRespository struct {
@@ -29,6 +31,24 @@ func (rpt *ProjectRespository) GetByID(id uint) (*models.Project, error) {
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", errcode.ErrDatabase, err)
 	}
+	return project, nil
+}
+
+func (rpt *ProjectRespository) GetAll() ([]*models.Project, error) {
+	projects := []*models.Project{}
+	err := rpt.DB.Find(&projects)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", errcode.ErrDatabase, err)
+	}
+	return projects, nil
+}
+
+func (rpt *ProjectRespository) Rename(name string, id uint) (*models.Project, error) {
+	project, err := rpt.GetByID(id)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", errcode.ErrDatabase, err)
+	}
+	project.Name = name
 	return project, nil
 }
 

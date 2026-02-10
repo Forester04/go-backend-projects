@@ -30,16 +30,16 @@ type User struct {
 type Project struct {
 	gorm.Model
 	Name        string `gorm:"type:varchar(100);not null"`
-	Description string `gorm:"type:text;not null"`
-	UserID      uint
+	Description string `gorm:"type:text"`
+	UserID      uint   `gorm:"not null;index"`
 	Tasks       []*Task
 }
 
 type Task struct {
 	gorm.Model
-	Title       string `gorm:"type:varchar(150);not null;unique"`
-	Description string `gorm:"type:text;not null"`
-	Status      Status `gorm:"type:status;not null;default:todo"`
-	UserID      uint
-	ProjectID   uint
+	Title       string `gorm:"type:varchar(150);not null"`
+	Description string `gorm:"type:text"`
+	Status      Status `gorm:"type:status;not null;default:'todo'"`
+	UserID      uint   `gorm:"not null;index"`
+	ProjectID   uint   `gorm:"not null;index"`
 }
