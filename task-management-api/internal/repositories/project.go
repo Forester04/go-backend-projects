@@ -1,70 +1,48 @@
 package repositories
 
 import (
-	"fmt"
-
-	"github.com/forester04/go-backend-projects/task-management-api/internal/errcode"
 	"github.com/forester04/go-backend-projects/task-management-api/internal/models"
 	"gorm.io/gorm"
 )
 
 type ProjectRepositoryInterface interface {
-	Create(project *models.Project) error
-	GetByID(id uint) (*models.Project, error)
-	GetByName(name string) (*models.Project, error)
-	GetAll() ([]*models.Project, error)
-	Update(project *models.Project) error
-	Rename(name string, id uint) (*models.Project, error)
-	Delete(id uint) error
+	Create(userID uint, project *models.Project) error
+	GetByID(userID uint, projectID uint) (*models.Project, error)
+	GetByName(userID, name string) (*models.Project, error)
+	ListByUser(userID uint) ([]*models.Project, error)
+	Save(userID uint, project *models.Project) error
+	Delete(userID uint, id uint) error
 }
-type ProjectRespository struct {
+type ProjectRepository struct {
 	DB *gorm.DB
 }
 
-func (rpt *ProjectRespository) Create(project *models.Project) error {
-	return rpt.DB.Create(project).Error
+func (rpt *ProjectRepository) Create(userID uint, project *models.Project) error {
+	return rpt.DB.Where("user_id = ?", userID).Create(project).Error
 }
 
-func (rpt *ProjectRespository) GetByID(id uint) (*models.Project, error) {
+func (rpt *ProjectRepository) GetByID(userID uint, id uint) (*models.Project, error) {
 	project := &models.Project{}
-	err := rpt.DB.Where("id = ?", id).First(project)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", errcode.ErrDatabase, err)
-	}
-	return project, nil
+	err := rpt.DB.Where("user_id = ? AND  id = ?", userID, id).Find(&project).Error
+	return project, err
 }
 
-func (rpt *ProjectRespository) GetAll() ([]*models.Project, error) {
+func (rpt *ProjectRepository) ListByUser(userID uint) ([]*models.Project, error) {
 	projects := []*models.Project{}
-	err := rpt.DB.Find(&projects)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", errcode.ErrDatabase, err)
-	}
-	return projects, nil
+	err := rpt.DB.Where("user_id = ?", userID).Find(&projects).Error
+	return projects, err
 }
 
-func (rpt *ProjectRespository) Rename(name string, id uint) (*models.Project, error) {
-	project, err := rpt.GetByID(id)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", errcode.ErrDatabase, err)
-	}
-	project.Name = name
-	return project, nil
-}
-
-func (rpt *ProjectRespository) GetByName(name string) (*models.Project, error) {
+func (rpt *ProjectRepository) GetByName(userID uint, name string) (*models.Project, error) {
 	project := &models.Project{}
-	err := rpt.DB.Where("name = ?", name).Limit(1).Find(project)
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", errcode.ErrDatabase, err)
-	}
-	return project, nil
+	err := rpt.DB.Where("user_id = ? AND name = ?", userID, name).First(&project).Error
+	return project, err
 }
 
-func (rpt *ProjectRespository) Update(project *models.Project) error {
-	return rpt.DB.UpdateColumns(project).Error
+func (rpt *ProjectRepository) Save(userID uint, project *models.Project) error {
+	return rpt.DB.Where("user_id = ?", userID).Save(project).Error
 }
 
-func (rpt *ProjectRespository) Delete(id uint) error {
-	return rpt.DB.Delete(&models.Project{}, id).Error
+func (rpt *ProjectRepository) Delete(userID uint, id uint) error {
+	return rpt.DB.Where("user_id = ? AND id = ?", userID, id).Delete(&models.Project{}).Error
 }
