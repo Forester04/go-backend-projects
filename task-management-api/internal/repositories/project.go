@@ -8,7 +8,7 @@ import (
 type ProjectRepositoryInterface interface {
 	Create(userID uint, project *models.Project) error
 	GetByID(userID uint, projectID uint) (*models.Project, error)
-	GetByName(userID, name string) (*models.Project, error)
+	GetByName(userID uint, name string) (*models.Project, error)
 	ListByUser(userID uint) ([]*models.Project, error)
 	Save(userID uint, project *models.Project) error
 	Delete(userID uint, id uint) error
